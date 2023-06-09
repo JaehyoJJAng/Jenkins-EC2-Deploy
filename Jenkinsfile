@@ -1,12 +1,15 @@
 def mainDir="Apps"
 def ecrLoginHelper="docker-credential-ecr-login"
-def region="<AWS Region>"
-def ecrUrl="<AWS ECR URL>"
-def repository="<Image Repository Name>"
-def deployHost="<Deploy VM Private IP>"
 
 pipeline {
     agent any
+
+    environment {
+        DEPLOY_HOST = credentials('ec2-public-ip')
+        ECR_URL = credentials('aws-ecr-url')
+        REPOSITORY = credentials('repository')
+        REGION = credentials('aws-region')
+    }
 
     stages {
         
@@ -30,12 +33,10 @@ pipeline {
                 sh """
                     echo "Docker Image build start"
                     cd ${mainDIr}
-                    
-
-                    
                 """
             }
         }
+
         // stage(3. 'Build Docker Image by Jib & Push to AWS ECR Repository') {
         //     steps {
         //         withAWS(region:"${region}", credentials:"aws-key") {
