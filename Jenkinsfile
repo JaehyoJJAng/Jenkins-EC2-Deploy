@@ -32,7 +32,7 @@ pipeline {
             steps {
                 sh """
                     echo "Docker Image build start"
-                    cd ${mainDIr}
+                    cd ${mainDir}
                 """
             }
         }
