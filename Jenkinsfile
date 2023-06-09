@@ -11,6 +11,8 @@ pipeline {
         REGION = credentials('aws-region')
         IMAGE_NAME = credentials('docker-image-name')
         DOCKER_HUB = credentials('docker-hub')
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_KEY = credentials('aws-secret-key')
     }
 
     stages {
@@ -40,7 +42,19 @@ pipeline {
             }
         }
 
-        stage('4. ECR login') {
+        stage('4. AWS CONFIGURE') {
+            steps {
+                sh (
+                    """
+                        aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+                        aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
+                        aws configure set default.region ${REGION}
+                    """
+                )
+            }
+        }
+
+        stage('5. ECR login') {
             steps {
                 sh(
                     """
@@ -50,7 +64,7 @@ pipeline {
             }
         }
 
-        stage('4. Build Docker Image & Push to AWS ECR') {
+        stage('6. Build Docker Image & Push to AWS ECR') {
             steps {
                 sh(
                     """
