@@ -6,10 +6,20 @@ pipeline {
 
     environment {
         DEPLOY_HOST = credentials('ec2-public-ip')
-        ECR_URL = credentials('aws-ecr-url')
+        ECR_ID = credentials('aws-ecr-id')
         REPOSITORY = credentials('repository')
         REGION = credentials('aws-region')
+        IMAGE_NAME = credentials('docker-image-name')
     }
+
+    withCredentials([
+        [
+            $class: 'UsernamePasswordMultiBinding',
+            credentialsId: 'docker-hub',
+            usernameVariable: 'DOCKER_USER_ID',
+            passwordVariable: 'DOCKER_USER_PASSWORD'
+        ]
+    ])
 
     stages {
         
@@ -27,12 +37,32 @@ pipeline {
                 """
             }
         }
-        
-        stage('3. Build Docker Image & Push to AWS ECR') {
+
+        stage('3. Docker hub Login') {
+            steps {
+                sh """
+                    echo "Docker hub Login start"
+                    echo "${DOCKER_USER_PASSWORD} | docker login --username ${DOCKER_USER_ID} --password-stdin
+                """
+            }
+        }
+
+        stage('4. ECR login') {
+            steps {
+                sh """
+                    aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_ID}.dkr.ecr.${REGION}.amazonaws.com
+                """ 
+            }
+        }
+
+        stage('4. Build Docker Image & Push to AWS ECR') {
             steps {
                 sh """
                     echo "Docker Image build start"
                     cd ${mainDir}
+                    docker build --tag ${IMAGE_NAME}:latest .
+                    docker tag ${IMAGE_NAME}:latest ${ECR_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/${REPOSITORY}:latest
+                    docker push ${ECR_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/${REPOSITORY}:latest
                 """
             }
         }
