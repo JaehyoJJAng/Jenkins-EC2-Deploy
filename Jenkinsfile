@@ -32,9 +32,10 @@ pipeline {
 
         stage('3. Docker hub Login') {
             steps {
-                sh (
+                sh ("""
                     echo "Docker hub Login start"
                     echo "${DOCKER_HUB_PSW}" | docker login --username ${DOCKER_HUB_USR} --password-stdin
+                    """
                 )
             }
         }
@@ -42,7 +43,9 @@ pipeline {
         stage('4. ECR login') {
             steps {
                 sh(
+                    """
                     aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_ID}.dkr.ecr.${REGION}.amazonaws.com
+                    """
                 )
             }
         }
@@ -50,6 +53,7 @@ pipeline {
         stage('4. Build Docker Image & Push to AWS ECR') {
             steps {
                 sh(
+                    """
                     echo "Docker Image build start"
                     cd ${mainDir}
                     docker build --tag ${IMAGE_NAME}:latest .
@@ -57,6 +61,7 @@ pipeline {
                     docker tag ${IMAGE_NAME}:latest ${ECR_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/${REPOSITORY}:latest
                     
                     docker push ${ECR_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/${REPOSITORY}:latest
+                    """
                 )
             }
         }
