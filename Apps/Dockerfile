@@ -1,6 +1,6 @@
 FROM openjdk:11
 
-COPY ./build/libs/*.jar ./app.jar
+COPY ./app/build/libs/*.jar ./app.jar
 
 ARG PORT=8080
 
