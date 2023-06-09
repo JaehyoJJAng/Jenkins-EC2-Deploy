@@ -62,6 +62,20 @@ pipeline {
             }
         }
 
+        stage('6. Build Docker Image & Push to AWS ECR') {
+            steps {
+                sh("""
+                    echo "Docker Image build start"
+                    cd ${mainDir}
+                    docker build --tag ${IMAGE_NAME}:latest .
+
+                    docker tag ${IMAGE_NAME}:latest ${ECR_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/${REPOSITORY}:latest
+                    
+                    docker push ${ECR_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/${REPOSITORY}:latest
+                    """
+                )
+            }
+        }
 
         // stage(3. 'Build Docker Image by Jib & Push to AWS ECR Repository') {
         //     steps {
