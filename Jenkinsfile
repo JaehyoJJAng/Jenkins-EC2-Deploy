@@ -12,7 +12,7 @@ pipeline {
         IMAGE_NAME = credentials('docker-image-name')
         DOCKER_HUB = credentials('docker-hub')
         AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
     }
 
     stages {
@@ -46,7 +46,7 @@ pipeline {
             steps {
                 sh ("""
                         aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-                        aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
+                        aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
                         aws configure set default.region ${REGION}
                     """
                 )
