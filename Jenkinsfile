@@ -10,14 +10,8 @@ pipeline {
         REPOSITORY = credentials('repository')
         REGION = credentials('aws-region')
         IMAGE_NAME = credentials('docker-image-name')
+        DOCKER_HUB = credentials('docker-hub')
     }
-
-    withCredentials([
-        [
-        $class: 'UsernamePasswordMultiBinding',
-        credentialsId: 'docker-hub',
-        usernameVariable: 'DOCKER_USER_ID', 
-        passwordVariable: 'DOCKER_USER_PASSWORD']])
 
     stages {
         
@@ -40,7 +34,7 @@ pipeline {
             steps {
                 sh """
                     echo "Docker hub Login start"
-                    echo "${DOCKER_USER_PASSWORD} | docker login --username ${DOCKER_USER_ID} --password-stdin
+                    echo "${DOCKER_HUB_PSW} | docker login --username ${DOCKER_HUB_USR} --password-stdin
                 """
             }
         }
