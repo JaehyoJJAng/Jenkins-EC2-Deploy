@@ -14,12 +14,10 @@ pipeline {
 
     withCredentials([
         [
-            $class: 'UsernamePasswordMultiBinding',
-            credentialsId: 'docker-hub',
-            usernameVariable: 'DOCKER_USER_ID',
-            passwordVariable: 'DOCKER_USER_PASSWORD'
-        ]
-    ])
+        $class: 'UsernamePasswordMultiBinding',
+        credentialsId: 'docker-hub',
+        usernameVariable: 'DOCKER_USER_ID', 
+        passwordVariable: 'DOCKER_USER_PASSWORD']])
 
     stages {
         
