@@ -63,7 +63,7 @@ pipeline {
         }
         
         stage('6. ls -lh') {
-            stpes {
+            steps {
                 sh ("ls -alh")
             }
         }
